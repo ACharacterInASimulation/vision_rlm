@@ -36,6 +36,10 @@ export PIP_DISABLE_PIP_VERSION_CHECK=1
 
 python -m pip install -U pip setuptools wheel
 
+# Ensure Colab uses a CUDA-enabled PyTorch build instead of a CPU-only wheel.
+python -m pip uninstall -y torch torchvision torchaudio || true
+python -m pip install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
+
 # Qwen's official model card recommends latest transformers from source.
 python -m pip install -U \
   "git+https://github.com/huggingface/transformers" \
