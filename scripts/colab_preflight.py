@@ -50,7 +50,13 @@ def main() -> None:
             f"expected {args.expected_gptqmodel}."
         )
 
-    autoawq = importlib.import_module("awq")
+    try:
+        autoawq = importlib.import_module("awq")
+    except Exception as exc:
+        raise SystemExit(
+            "[preflight] Failed to import autoawq/awq cleanly. "
+            "This usually means Colab still has an incompatible autoawq build installed."
+        ) from exc
     autoawq_version = getattr(autoawq, "__version__", "unknown")
     print(f"[preflight] autoawq={autoawq_version}")
     if autoawq_version == "unknown":

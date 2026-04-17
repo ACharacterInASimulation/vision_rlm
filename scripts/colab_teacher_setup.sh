@@ -57,10 +57,9 @@ python -m pip install -U \
   sentencepiece \
   qwen-vl-utils[decord]==0.0.8
 
-# Transformers' AWQ path checks the installed autoawq package. Keep it on a
-# modern wheel-based release, then reinstall our pinned Transformers version
-# because autoawq may otherwise downgrade it.
-python -m pip install -U "autoawq>=0.1.8,<0.3"
+# Transformers' AWQ path checks the installed autoawq package. Pin to the last
+# pre-Qwen3 release line so it doesn't require newer Transformers internals.
+python -m pip install -U "autoawq==0.2.7"
 python -m pip install -U "transformers==4.50.0"
 
 # Newer GPTQModel releases may publish only source archives, which is brittle on Colab.
