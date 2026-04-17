@@ -53,7 +53,9 @@ python -m pip install -U \
   sentencepiece \
   qwen-vl-utils[decord]==0.0.8
 
-python -m pip install gptqmodel --no-build-isolation
+# Newer GPTQModel releases may publish only source archives, which is brittle on Colab.
+# Pin to the first release line that explicitly added Qwen 2.5 VL support.
+python -m pip install "gptqmodel==2.2.0" --no-build-isolation
 
 if [[ -n "${HF_TOKEN:-}" ]]; then
   hf auth login --token "$HF_TOKEN" --add-to-git-credential
