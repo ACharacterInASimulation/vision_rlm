@@ -11,7 +11,7 @@ set -euo pipefail
 #   VISION_RLM_REPO_URL=https://github.com/<you>/<repo>.git
 #   VISION_RLM_REPO_DIR=/content/vision_rlm
 #   VISION_RLM_COLAB_CACHE=/content/vision_rlm_cache
-#   VISION_RLM_TEACHER_MODEL=Qwen/Qwen2.5-VL-72B-Instruct-AWQ
+#   VISION_RLM_TEACHER_MODEL=Qwen/Qwen3-VL-8B-Instruct
 #   VISION_RLM_DOWNLOAD_SLIDEVQA=1
 #   VISION_RLM_RUN_SMOKE=1
 
@@ -19,7 +19,7 @@ REPO_URL="${VISION_RLM_REPO_URL:-}"
 REPO_DIR="${VISION_RLM_REPO_DIR:-/content/vision_rlm}"
 CACHE_ROOT="${VISION_RLM_COLAB_CACHE:-/content/vision_rlm_cache}"
 HF_HOME="${HF_HOME:-$CACHE_ROOT/huggingface}"
-MODEL_ID="${VISION_RLM_TEACHER_MODEL:-Qwen/Qwen2.5-VL-72B-Instruct-AWQ}"
+MODEL_ID="${VISION_RLM_TEACHER_MODEL:-Qwen/Qwen3-VL-8B-Instruct}"
 DOWNLOAD_SLIDEVQA="${VISION_RLM_DOWNLOAD_SLIDEVQA:-1}"
 RUN_SMOKE="${VISION_RLM_RUN_SMOKE:-0}"
 
@@ -40,13 +40,12 @@ python -m pip install -U pip setuptools wheel
 python -m pip uninstall -y torch torchvision torchaudio || true
 python -m pip install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
-# Clear stale AWQ installs so Colab doesn't keep an incompatible preinstalled copy.
-python -m pip uninstall -y autoawq autoawq-kernels awq || true
+# Clear stale quantization installs from previous debugging sessions.
+python -m pip uninstall -y autoawq autoawq-kernels awq gptqmodel || true
 
-# Qwen2.5-VL landed in released Transformers builds, so use a stable 4.x line
-# that still matches GPTQModel's AWQ integration instead of bleeding-edge main.
+# Qwen3-VL is supported in the current stable Transformers release line.
 python -m pip install -U \
-  "transformers==4.50.0" \
+  "transformers==5.5.0" \
   accelerate \
   huggingface_hub \
   datasets \
@@ -54,17 +53,7 @@ python -m pip install -U \
   pillow \
   pymupdf \
   rank_bm25 \
-  sentencepiece \
-  qwen-vl-utils[decord]==0.0.8
-
-# Transformers' AWQ path checks the installed autoawq package. Pin to the last
-# pre-Qwen3 release line so it doesn't require newer Transformers internals.
-python -m pip install -U "autoawq==0.2.7"
-python -m pip install -U "transformers==4.50.0"
-
-# Newer GPTQModel releases may publish only source archives, which is brittle on Colab.
-# Pin to the first release line that explicitly added Qwen 2.5 VL support.
-python -m pip install "gptqmodel==2.2.0" --no-build-isolation
+  sentencepiece
 
 if [[ -n "${HF_TOKEN:-}" ]]; then
   hf auth login --token "$HF_TOKEN" --add-to-git-credential

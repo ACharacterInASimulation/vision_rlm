@@ -1,4 +1,4 @@
-base_model: Qwen/Qwen2.5-VL-7B-Instruct
+base_model: Qwen/Qwen3-VL-8B-Instruct
 model_type: AutoModelForVision2Seq
 tokenizer_type: AutoTokenizer
 
@@ -32,13 +32,13 @@ tf32: true
 flash_attention: true
 gradient_checkpointing: true
 
-output_dir: /l/users/badrinath.chandana/vision_rlm/checkpoints/qwen25vl_7b_sft_pilot
+output_dir: /l/users/badrinath.chandana/vision_rlm/checkpoints/qwen3vl_8b_sft_pilot
 
 special_tokens:
   pad_token: "<|endoftext|>"
 
 notes:
   - Optional stretch config for the sprint.
-  - Use the 3B config first unless the pipeline is already stable.
+  - Use the 4B config first unless the pipeline is already stable.
   - Freeze vision encoder on the first run if the training stack supports it.
   - Keep only the latest visual observation in context during the sprint.

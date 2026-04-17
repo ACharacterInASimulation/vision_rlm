@@ -99,6 +99,8 @@ def _blocks_from_legacy_ocr_result(page_row: dict, results: list) -> list[dict]:
         return blocks
 
     line_results = results[0] if isinstance(results, list) and results else []
+    if line_results is None:
+        return blocks
     for reading_order, line in enumerate(line_results):
         if not isinstance(line, (list, tuple)) or len(line) < 2:
             continue
@@ -199,6 +201,8 @@ def _extract_paddleocr_blocks(
         return _blocks_from_predict_result(page_row, results[0])
 
     results = ocr.ocr(page_row["hires_path"], cls=use_doc_orientation_classify)
+    if results is None:
+        return []
     return _blocks_from_legacy_ocr_result(page_row, results)
 
 

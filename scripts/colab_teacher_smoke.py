@@ -5,8 +5,7 @@ from pathlib import Path
 
 import torch
 import transformers
-from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
-from qwen_vl_utils import process_vision_info
+from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
 
 
 def parse_args() -> argparse.Namespace:
@@ -15,7 +14,7 @@ def parse_args() -> argparse.Namespace:
         "--model-dir",
         type=Path,
         required=True,
-        help="Local directory containing the downloaded Qwen2.5-VL checkpoint.",
+        help="Local directory containing the downloaded Qwen3-VL checkpoint.",
     )
     parser.add_argument(
         "--image-url",
@@ -38,10 +37,11 @@ def main() -> None:
     print(f"[smoke] torch={torch.__version__}")
     print(f"[smoke] cuda_available={torch.cuda.is_available()}")
     print(f"[smoke] transformers={transformers.__version__}")
-    model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
+    model = Qwen3VLForConditionalGeneration.from_pretrained(
         args.model_dir.as_posix(),
         torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         device_map="auto",
+        attn_implementation="sdpa",
     )
     processor = AutoProcessor.from_pretrained(args.model_dir.as_posix())
 
@@ -49,21 +49,21 @@ def main() -> None:
         {
             "role": "user",
             "content": [
-                {"type": "image", "image": args.image_url},
+                {"type": "image", "url": args.image_url},
                 {"type": "text", "text": args.prompt},
             ],
         }
     ]
-    text = processor.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    image_inputs, video_inputs = process_vision_info(messages)
-    inputs = processor(
-        text=[text],
-        images=image_inputs,
-        videos=video_inputs,
-        padding=True,
+    inputs = processor.apply_chat_template(
+        messages,
+        tokenize=True,
+        add_generation_prompt=True,
+        return_dict=True,
         return_tensors="pt",
     )
-    inputs = inputs.to("cuda" if torch.cuda.is_available() else "cpu")
+    inputs.pop("token_type_ids", None)
+    if torch.cuda.is_available():
+        inputs = {key: value.to("cuda") if hasattr(value, "to") else value for key, value in inputs.items()}
     generated_ids = model.generate(**inputs, max_new_tokens=args.max_new_tokens)
     generated_ids_trimmed = [
         out_ids[len(in_ids) :] for in_ids, out_ids in zip(inputs.input_ids, generated_ids)
