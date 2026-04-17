@@ -49,7 +49,7 @@ python -m pip install -U \
   qwen-vl-utils[decord]==0.0.8
 
 if [[ -n "${HF_TOKEN:-}" ]]; then
-  huggingface-cli login --token "$HF_TOKEN" --add-to-git-credential
+  hf auth login --token "$HF_TOKEN" --add-to-git-credential
 else
   echo "[vision_rlm] HF_TOKEN not set; assuming Colab already has Hugging Face auth."
 fi
@@ -67,7 +67,7 @@ fi
 MODEL_DIR="$CACHE_ROOT/models/${MODEL_ID//\//__}"
 mkdir -p "$MODEL_DIR"
 echo "[vision_rlm] downloading teacher model to $MODEL_DIR"
-huggingface-cli download "$MODEL_ID" \
+hf download "$MODEL_ID" \
   --local-dir "$MODEL_DIR" \
   --resume-download
 
@@ -75,7 +75,7 @@ if [[ "$DOWNLOAD_SLIDEVQA" == "1" ]]; then
   DATASET_DIR="$CACHE_ROOT/datasets/slidevqa"
   mkdir -p "$DATASET_DIR"
   echo "[vision_rlm] downloading SlideVQA dataset to $DATASET_DIR"
-  huggingface-cli download NTT-hil-insight/SlideVQA \
+  hf download NTT-hil-insight/SlideVQA \
     --repo-type dataset \
     --local-dir "$DATASET_DIR" \
     --resume-download
