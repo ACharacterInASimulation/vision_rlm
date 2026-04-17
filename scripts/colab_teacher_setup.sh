@@ -42,11 +42,14 @@ python -m pip install -U \
   accelerate \
   huggingface_hub \
   datasets \
+  optimum \
   pillow \
   pymupdf \
   rank_bm25 \
   sentencepiece \
   qwen-vl-utils[decord]==0.0.8
+
+python -m pip install gptqmodel --no-build-isolation
 
 if [[ -n "${HF_TOKEN:-}" ]]; then
   hf auth login --token "$HF_TOKEN" --add-to-git-credential
