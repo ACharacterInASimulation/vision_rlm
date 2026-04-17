@@ -6,7 +6,6 @@ import sys
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--expected-transformers", default="5.5.0")
     parser.add_argument("--require-cuda", action="store_true")
     return parser.parse_args()
 
@@ -23,12 +22,6 @@ def main() -> None:
 
     if args.require_cuda and not torch.cuda.is_available():
         raise SystemExit("[preflight] CUDA is required but torch.cuda.is_available() is False.")
-
-    if transformers.__version__ != args.expected_transformers:
-        raise SystemExit(
-            "[preflight] Unexpected transformers version "
-            f"{transformers.__version__}; expected {args.expected_transformers}."
-        )
 
     try:
         from transformers import (  # noqa: F401

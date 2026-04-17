@@ -38,12 +38,31 @@ def main() -> None:
     print(f"[smoke] cuda_available={torch.cuda.is_available()}")
     print(f"[smoke] transformers={transformers.__version__}")
     config = AutoConfig.from_pretrained(args.model_dir.as_posix())
+    print(f"[smoke] config_model_type={getattr(config, 'model_type', 'unknown')}")
     architectures = set(config.architectures or [])
-    model_cls = Qwen3VLMoeForConditionalGeneration if "Qwen3VLMoeForConditionalGeneration" in architectures else Qwen3VLForConditionalGeneration
+    print(f"[smoke] architectures={sorted(architectures)}")
+    if getattr(config, "quantization_config", None) is not None:
+        raise SystemExit(
+            "[smoke] Detected a quantized checkpoint in this model directory. "
+            "For the 98GB Colab GPU path we want the full-precision "
+            "Qwen/Qwen3-VL-30B-A3B-Instruct checkpoint, not an AWQ/GPTQ variant. "
+            "Please clear the wrong cached folder and rerun setup."
+        )
+    model_cls = (
+        Qwen3VLMoeForConditionalGeneration
+        if "Qwen3VLMoeForConditionalGeneration" in architectures or getattr(config, "model_type", None) == "qwen3_vl_moe"
+        else Qwen3VLForConditionalGeneration
+    )
+    if getattr(config, "model_type", None) not in {"qwen3_vl", "qwen3_vl_moe"}:
+        raise SystemExit(
+            "[smoke] This model directory does not contain a Qwen3-VL checkpoint. "
+            f"Found model_type={getattr(config, 'model_type', 'unknown')} instead. "
+            "Most likely Colab is pointing at an older cached model directory."
+        )
     print(f"[smoke] model_class={model_cls.__name__}")
     model = model_cls.from_pretrained(
         args.model_dir.as_posix(),
-        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
+        torch_dtype=torch.bfloat16 if torch.cuda.is_available() else torch.float32,
         device_map="auto",
         attn_implementation="sdpa",
     )

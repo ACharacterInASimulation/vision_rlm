@@ -45,7 +45,7 @@ python -m pip uninstall -y autoawq autoawq-kernels awq gptqmodel || true
 
 # Qwen3-VL is supported in the current stable Transformers release line.
 python -m pip install -U \
-  "transformers==5.5.0" \
+  "git+https://github.com/huggingface/transformers" \
   accelerate \
   huggingface_hub \
   datasets \
