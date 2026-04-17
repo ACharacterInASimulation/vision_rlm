@@ -72,6 +72,8 @@ fi
 if [[ -d "$REPO_DIR" ]]; then
   echo "[vision_rlm] installing repo from $REPO_DIR"
   python -m pip install -e "$REPO_DIR"
+  echo "[vision_rlm] running preflight dependency check"
+  python "$REPO_DIR/scripts/colab_preflight.py" --require-cuda
 fi
 
 MODEL_DIR="$CACHE_ROOT/models/${MODEL_ID//\//__}"

@@ -4,6 +4,7 @@ import argparse
 from pathlib import Path
 
 import torch
+import transformers
 from transformers import AutoProcessor, Qwen2_5_VLForConditionalGeneration
 from qwen_vl_utils import process_vision_info
 
@@ -34,9 +35,12 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    print(f"[smoke] torch={torch.__version__}")
+    print(f"[smoke] cuda_available={torch.cuda.is_available()}")
+    print(f"[smoke] transformers={transformers.__version__}")
     model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
         args.model_dir.as_posix(),
-        torch_dtype="auto",
+        torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         device_map="auto",
     )
     processor = AutoProcessor.from_pretrained(args.model_dir.as_posix())
