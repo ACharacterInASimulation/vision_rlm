@@ -1,0 +1,44 @@
+base_model: Qwen/Qwen2.5-VL-3B-Instruct
+model_type: AutoModelForVision2Seq
+tokenizer_type: AutoTokenizer
+
+load_in_4bit: true
+strict: false
+
+datasets:
+  - path: /l/users/badrinath.chandana/vision_rlm/data/processed/step_datasets/slidevqa_pilot_steps.jsonl
+    type: chat_template
+
+adapter: qlora
+lora_r: 64
+lora_alpha: 128
+lora_dropout: 0.05
+
+sequence_len: 6144
+sample_packing: false
+pad_to_sequence_len: false
+
+gradient_accumulation_steps: 16
+micro_batch_size: 1
+num_epochs: 2
+learning_rate: 0.0002
+lr_scheduler: cosine
+warmup_ratio: 0.05
+
+optimizer: adamw_bnb_8bit
+bf16: auto
+tf32: true
+
+flash_attention: true
+gradient_checkpointing: true
+
+output_dir: /l/users/badrinath.chandana/vision_rlm/checkpoints/qwen25vl_3b_sft_pilot
+
+special_tokens:
+  pad_token: "<|endoftext|>"
+
+notes:
+  - Default pilot config for the sprint.
+  - Prefer this config before attempting 7B.
+  - Freeze the vision encoder on the first run if supported.
+  - Keep only the latest visual observation in context during the sprint.

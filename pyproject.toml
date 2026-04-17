@@ -1,0 +1,44 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vision-rlm"
+version = "0.1.0"
+description = "Pilot repo for budgeted recursive multimodal document QA."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = []
+
+[project.optional-dependencies]
+core = [
+  "accelerate>=1.2.0",
+  "datasets>=2.19.0",
+  "matplotlib>=3.8.0",
+  "pandas>=2.2.0",
+  "peft>=0.13.0",
+  "pillow>=10.0.0",
+  "pyarrow>=16.0.0",
+  "pymupdf>=1.24.0",
+  "rank-bm25>=0.2.2",
+  "transformers>=4.49.0",
+]
+ocr = [
+  "paddleocr>=2.8.1",
+]
+retrieval = [
+  "faiss-cpu>=1.8.0",
+]
+train = [
+  "bitsandbytes>=0.43.0",
+  "trl>=0.9.0",
+]
+dev = [
+  "pytest>=8.0.0",
+]
+
+[project.scripts]
+vision-rlm = "vision_rlm.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["vision_rlm*"]

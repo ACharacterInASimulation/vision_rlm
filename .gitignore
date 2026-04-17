@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+.env
+*.egg-info/
+
+artifacts/
+outputs/
+logs/
+checkpoints/
+data/
+
+*.log
+*.jsonl.tmp
+*.parquet.tmp
+
+# Local docs and handoff material stay out of the code-only repo.
+*.md
+docs/
+progress/
+*.docx
