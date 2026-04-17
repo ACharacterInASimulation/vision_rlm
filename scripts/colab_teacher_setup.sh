@@ -40,6 +40,9 @@ python -m pip install -U pip setuptools wheel
 python -m pip uninstall -y torch torchvision torchaudio || true
 python -m pip install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
+# Clear stale AWQ installs so Colab doesn't keep an incompatible preinstalled copy.
+python -m pip uninstall -y autoawq autoawq-kernels awq || true
+
 # Qwen2.5-VL landed in released Transformers builds, so use a stable 4.x line
 # that still matches GPTQModel's AWQ integration instead of bleeding-edge main.
 python -m pip install -U \
@@ -53,6 +56,12 @@ python -m pip install -U \
   rank_bm25 \
   sentencepiece \
   qwen-vl-utils[decord]==0.0.8
+
+# Transformers' AWQ path checks the installed autoawq package. Keep it on a
+# modern wheel-based release, then reinstall our pinned Transformers version
+# because autoawq may otherwise downgrade it.
+python -m pip install -U "autoawq>=0.1.8,<0.3"
+python -m pip install -U "transformers==4.50.0"
 
 # Newer GPTQModel releases may publish only source archives, which is brittle on Colab.
 # Pin to the first release line that explicitly added Qwen 2.5 VL support.
