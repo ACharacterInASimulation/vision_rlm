@@ -68,8 +68,7 @@ MODEL_DIR="$CACHE_ROOT/models/${MODEL_ID//\//__}"
 mkdir -p "$MODEL_DIR"
 echo "[vision_rlm] downloading teacher model to $MODEL_DIR"
 hf download "$MODEL_ID" \
-  --local-dir "$MODEL_DIR" \
-  --resume-download
+  --local-dir "$MODEL_DIR"
 
 if [[ "$DOWNLOAD_SLIDEVQA" == "1" ]]; then
   DATASET_DIR="$CACHE_ROOT/datasets/slidevqa"
@@ -77,8 +76,7 @@ if [[ "$DOWNLOAD_SLIDEVQA" == "1" ]]; then
   echo "[vision_rlm] downloading SlideVQA dataset to $DATASET_DIR"
   hf download NTT-hil-insight/SlideVQA \
     --repo-type dataset \
-    --local-dir "$DATASET_DIR" \
-    --resume-download
+    --local-dir "$DATASET_DIR"
 fi
 
 if [[ "$RUN_SMOKE" == "1" ]]; then
