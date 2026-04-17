@@ -5,7 +5,7 @@ from pathlib import Path
 
 import torch
 import transformers
-from transformers import AutoProcessor, Qwen3VLForConditionalGeneration
+from transformers import AutoConfig, AutoProcessor, Qwen3VLForConditionalGeneration, Qwen3VLMoeForConditionalGeneration
 
 
 def parse_args() -> argparse.Namespace:
@@ -37,7 +37,11 @@ def main() -> None:
     print(f"[smoke] torch={torch.__version__}")
     print(f"[smoke] cuda_available={torch.cuda.is_available()}")
     print(f"[smoke] transformers={transformers.__version__}")
-    model = Qwen3VLForConditionalGeneration.from_pretrained(
+    config = AutoConfig.from_pretrained(args.model_dir.as_posix())
+    architectures = set(config.architectures or [])
+    model_cls = Qwen3VLMoeForConditionalGeneration if "Qwen3VLMoeForConditionalGeneration" in architectures else Qwen3VLForConditionalGeneration
+    print(f"[smoke] model_class={model_cls.__name__}")
+    model = model_cls.from_pretrained(
         args.model_dir.as_posix(),
         torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32,
         device_map="auto",
@@ -49,7 +53,7 @@ def main() -> None:
         {
             "role": "user",
             "content": [
-                {"type": "image", "url": args.image_url},
+                {"type": "image", "image": args.image_url},
                 {"type": "text", "text": args.prompt},
             ],
         }

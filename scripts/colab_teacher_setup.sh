@@ -11,7 +11,7 @@ set -euo pipefail
 #   VISION_RLM_REPO_URL=https://github.com/<you>/<repo>.git
 #   VISION_RLM_REPO_DIR=/content/vision_rlm
 #   VISION_RLM_COLAB_CACHE=/content/vision_rlm_cache
-#   VISION_RLM_TEACHER_MODEL=Qwen/Qwen3-VL-8B-Instruct
+#   VISION_RLM_TEACHER_MODEL=Qwen/Qwen3-VL-30B-A3B-Instruct
 #   VISION_RLM_DOWNLOAD_SLIDEVQA=1
 #   VISION_RLM_RUN_SMOKE=1
 
@@ -19,7 +19,7 @@ REPO_URL="${VISION_RLM_REPO_URL:-}"
 REPO_DIR="${VISION_RLM_REPO_DIR:-/content/vision_rlm}"
 CACHE_ROOT="${VISION_RLM_COLAB_CACHE:-/content/vision_rlm_cache}"
 HF_HOME="${HF_HOME:-$CACHE_ROOT/huggingface}"
-MODEL_ID="${VISION_RLM_TEACHER_MODEL:-Qwen/Qwen3-VL-8B-Instruct}"
+MODEL_ID="${VISION_RLM_TEACHER_MODEL:-Qwen/Qwen3-VL-30B-A3B-Instruct}"
 DOWNLOAD_SLIDEVQA="${VISION_RLM_DOWNLOAD_SLIDEVQA:-1}"
 RUN_SMOKE="${VISION_RLM_RUN_SMOKE:-0}"
 

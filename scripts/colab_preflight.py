@@ -31,10 +31,14 @@ def main() -> None:
         )
 
     try:
-        from transformers import AutoProcessor, Qwen3VLForConditionalGeneration  # noqa: F401
+        from transformers import (  # noqa: F401
+            AutoProcessor,
+            Qwen3VLForConditionalGeneration,
+            Qwen3VLMoeForConditionalGeneration,
+        )
     except ImportError as exc:
         raise SystemExit(
-            "[preflight] Qwen3-VL classes are not available in the installed transformers build."
+            "[preflight] Qwen3-VL dense/MoE classes are not available in the installed transformers build."
         ) from exc
 
     print("[preflight] imports_ok")
