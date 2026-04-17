@@ -40,9 +40,10 @@ python -m pip install -U pip setuptools wheel
 python -m pip uninstall -y torch torchvision torchaudio || true
 python -m pip install -U torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu124
 
-# Qwen's official model card recommends latest transformers from source.
+# Qwen2.5-VL landed in released Transformers builds, so use a stable 4.x line
+# that still matches GPTQModel's AWQ integration instead of bleeding-edge main.
 python -m pip install -U \
-  "git+https://github.com/huggingface/transformers" \
+  "transformers==4.50.0" \
   accelerate \
   huggingface_hub \
   datasets \
